@@ -35,6 +35,4 @@ model SportType {
   name      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-
-  activities Activity[]
 }
