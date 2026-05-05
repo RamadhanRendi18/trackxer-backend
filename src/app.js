@@ -1,5 +1,6 @@
 import express from "express";
 import userRoutes from "./routes/user.routes.js";
+import sportTypeRoutes from "./routes/sportType.route.js";
 import authRoutes from "./routes/auth.routes.js";
 import dotenv from "dotenv";
 
@@ -15,6 +16,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
+app.use("/api/sport-types", sportTypeRoutes);
 app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {

@@ -74,7 +74,7 @@ export const updateUser = async (req, res) => {
             data: { name, email }
         });
 
-        res.json({
+        res.status(200).json({
             message: "User berhasil diupdate",
             user
         });

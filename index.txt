@@ -1,0 +1,8 @@
+JWT_SECRET=IDTrackxer@
+
+// seed db
+npx prisma db seed
+
+// 
+npx prisma migrate dev --name create_sport_type
+
