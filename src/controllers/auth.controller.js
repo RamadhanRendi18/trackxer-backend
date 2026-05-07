@@ -36,7 +36,12 @@ export const login = async (req, res) => {
         // response
         res.json({
             message: "Login Berhasil",
-            token
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                role: user.role
+            }
         });
 
 

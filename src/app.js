@@ -3,10 +3,14 @@ import userRoutes from "./routes/user.routes.js";
 import sportTypeRoutes from "./routes/sportType.route.js";
 import authRoutes from "./routes/auth.routes.js";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
+app.use(cors({
+    origin: "http://localhost:3001"
+}));
 
 app.use((req, res, next) => {
   console.log("REQUEST MASUK:", req.method, req.url);
