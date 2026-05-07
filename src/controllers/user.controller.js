@@ -11,6 +11,9 @@ export const getUsers = async (req, res) => {
                 email: true,
                 role: true,
                 createdAt: true,
+            },
+            orderBy: {
+                createdAt: "desc"
             }
         });
 
@@ -24,7 +27,14 @@ export const getUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
-            where: { id: Number(req.params.id) }
+            where: { id: Number(req.params.id) },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true,
+            }
         });
 
         if(!user){
@@ -46,11 +56,28 @@ export const createUser = async (req, res) =>  {
         // hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        const existingEmail = await prisma.user.findUnique({
+            where: {email}
+        });
+
+        if(existingEmail){
+            return res.status(400).json({
+                message: "Email sudah digunakan"
+            });
+        }
+
         const user = await prisma.user.create({
             data: {
                 name,
                 email,
                 password: hashedPassword
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true,
             }
         });
 
@@ -69,6 +96,26 @@ export const updateUser = async (req, res) => {
     try {
         const { name, email } = req.body;
 
+        const existingUser = await prisma.user.findUnique({
+            where: { id: Number(req.params.id) }
+        });
+
+        if(existingUser){
+            return res.status(404).json({ 
+                message: "User tidak ditemukan"
+            })
+        }
+
+        const existingEmail = await prisma.user.findUnique({
+            where: {email}
+        });
+
+        if(existingEmail){
+            return res.status(400).json({
+                message: "Email sudah digunakan"
+            });
+        }
+
         const user = await prisma.user.update({
             where: { id: Number(req.params.id) },
             data: { name, email }
@@ -86,6 +133,16 @@ export const updateUser = async (req, res) => {
 // SECTION DELETE USER
 export const deleteUser = async (req, res) => {
     try{
+        const existingUser = await prisma.user.findUnique({
+            where: { id: Number(req.params.id) }
+        });
+
+        if(existingUser){
+            return res.status(404).json({
+                message: "User tidak ditemukan"
+            })
+        }
+        
         await prisma.user.delete({
             where: { id: Number(req.params.id) }
         });
