@@ -60,7 +60,7 @@ export const createUser = async (req, res) =>  {
             where: {email}
         });
 
-        if(!existingEmail){
+        if(existingEmail){
             return res.status(400).json({
                 message: "Email sudah digunakan"
             });
@@ -110,7 +110,7 @@ export const updateUser = async (req, res) => {
             where: {email}
         });
 
-        if(!existingEmail){
+        if(existingEmail){
             return res.status(400).json({
                 message: "Email sudah digunakan"
             });
