@@ -60,7 +60,7 @@ export const createUser = async (req, res) =>  {
             where: {email}
         });
 
-        if(existingEmail){
+        if(!existingEmail){
             return res.status(400).json({
                 message: "Email sudah digunakan"
             });
@@ -100,7 +100,7 @@ export const updateUser = async (req, res) => {
             where: { id: Number(req.params.id) }
         });
 
-        if(existingUser){
+        if(!existingUser){
             return res.status(404).json({ 
                 message: "User tidak ditemukan"
             })
@@ -110,7 +110,7 @@ export const updateUser = async (req, res) => {
             where: {email}
         });
 
-        if(existingEmail){
+        if(!existingEmail){
             return res.status(400).json({
                 message: "Email sudah digunakan"
             });
@@ -137,7 +137,7 @@ export const deleteUser = async (req, res) => {
             where: { id: Number(req.params.id) }
         });
 
-        if(existingUser){
+        if(!existingUser){
             return res.status(404).json({
                 message: "User tidak ditemukan"
             })
