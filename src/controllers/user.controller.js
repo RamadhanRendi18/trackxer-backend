@@ -37,7 +37,7 @@ export const getUserById = async (req, res) => {
             }
         });
 
-        if(!user){
+        if (!user) {
             return res.status(404).json({ message: "User tidak ditemukan" });
         }
 
@@ -49,18 +49,18 @@ export const getUserById = async (req, res) => {
 }
 
 // SECTION CREATE USER
-export const createUser = async (req, res) =>  {
+export const createUser = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
 
         // hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const existingEmail = await prisma.user.findUnique({
-            where: {email}
+            where: { email }
         });
 
-        if(existingEmail){
+        if (existingEmail) {
             return res.status(400).json({
                 message: "Email sudah digunakan"
             });
@@ -70,7 +70,8 @@ export const createUser = async (req, res) =>  {
             data: {
                 name,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                role: role || "user"
             },
             select: {
                 id: true,
@@ -85,70 +86,92 @@ export const createUser = async (req, res) =>  {
             message: "User berhasil dibuat",
             user
         });
-        
+
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
 // SECTION UPDATE USER
+// SECTION UPDATE USER
 export const updateUser = async (req, res) => {
     try {
-        const { name, email } = req.body;
 
+        const { name, email, role } = req.body;
+
+        // cek user
         const existingUser = await prisma.user.findUnique({
-            where: { id: Number(req.params.id) }
+            where: {
+                id: Number(req.params.id)
+            }
         });
 
-        if(!existingUser){
-            return res.status(404).json({ 
+        if (!existingUser) {
+            return res.status(404).json({
                 message: "User tidak ditemukan"
-            })
+            });
         }
 
+        // cek email
         const existingEmail = await prisma.user.findUnique({
-            where: {email}
+            where: { email }
         });
 
-        if(existingEmail){
+        // kalau email dipakai user lain
+        if (
+            existingEmail &&
+            existingEmail.id !== Number(req.params.id)
+        ) {
             return res.status(400).json({
                 message: "Email sudah digunakan"
             });
         }
 
+        // update
         const user = await prisma.user.update({
-            where: { id: Number(req.params.id) },
-            data: { name, email }
+            where: {
+                id: Number(req.params.id)
+            },
+            data: {
+                name,
+                email,
+                role
+            }
         });
 
         res.status(200).json({
             message: "User berhasil diupdate",
             user
         });
-    } catch(error) {
-        res.status(500).json({ message: error.message });
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        });
+
     }
 }
 
 // SECTION DELETE USER
 export const deleteUser = async (req, res) => {
-    try{
+    try {
         const existingUser = await prisma.user.findUnique({
             where: { id: Number(req.params.id) }
         });
 
-        if(!existingUser){
+        if (!existingUser) {
             return res.status(404).json({
                 message: "User tidak ditemukan"
             })
         }
-        
+
         await prisma.user.delete({
             where: { id: Number(req.params.id) }
         });
-        
+
         res.json({ message: "User berhasil dihapus" });
-    } catch (error){
+    } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
